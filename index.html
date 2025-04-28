@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Hub - Free Online Tools</title>
+
+    <script src="https://unpkg.com/js-quantities@1.4.0"></script>
+
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: white;
+            margin-top: 20px;
+        }
+        p {
+            color: white;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+        .tool-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+        .tool-card a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        /* Hidden sections */
+        .section {
+            display: none;
+        }
+        /* Unit Converter Styles */
+        .unit-converter-container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin: 30px auto;
+            color: #333;
+        }
+        select, input, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background: #4facfe;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background: #00c6fb;
+        }
+        .result {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        /* Back Button */
+        .back-btn {
+            margin-top: 20px;
+            display: inline-block;
+            background: white;
+            color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Homepage Section -->
+    <div id="home" class="container">
+        <h1>Welcome to Tools Hub</h1>
+        <p>Your one-stop destination for free online tools!</p>
+        
+        <div class="tools-grid">
+            <div class="tool-card">
+                <h3>PDF Converter</h3>
+                <p>Convert your files to and from PDF easily.</p>
+                <a onclick="alert('Coming Soon!')">Try Now</a>
+            </div>
+            <div class="tool-card">
+                <h3>Currency Converter</h3>
+                <p>Convert currencies instantly with real-time rates.</p>
+                <a onclick="alert('Coming Soon!')">Try Now</a>
+            </div>
+            <div class="tool-card">
+                <h3>Unit Converter</h3>
+                <p>Convert length, weight, temperature, and more.</p>
+                <a onclick="showSection('unitConverter')">Try Now</a>
+            </div>
+            <div class="tool-card">
+                <h3>Image Compressor</h3>
+                <p>Reduce image size without losing quality.</p>
+                <a onclick="alert('Coming Soon!')">Try Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unit Converter Section -->
+    <div id="unitConverter" class="container section">
+        <h2>Unit Converter</h2>
+        <div class="unit-converter-container">
+            <label for="category">Select Category:</label>
+            <select id="category" onchange="updateUnits()">
+                <option value="length">Length</option>
+                <option value="weight">Weight</option>
+                <option value="temperature">Temperature</option>
+            </select>
+            
+            <label for="inputValue">Enter Value:</label>
+            <input type="number" id="inputValue" placeholder="Enter value">
+            
+            <label for="fromUnit">From:</label>
+            <select id="fromUnit"></select>
+            
+            <label for="toUnit">To:</label>
+            <select id="toUnit"></select>
+            
+            <button onclick="convert()">Convert</button>
+            
+            <div class="result" id="result">Result: -</div>
+        </div>
+
+        <a class="back-btn" onclick="showSection('home')">← Back to Home</a>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Control which section is shown
+        function showSection(sectionId) {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('unitConverter').style.display = 'none';
+            
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        // Unit Converter Logic
+        const units = {
+            length: ["m", "cm", "mm", "km", "inch", "ft", "yd", "mile"],
+            weight: ["kg", "g", "mg", "lb", "oz"],
+            temperature: ["C", "F", "K"]
+        };
+        
+        function updateUnits() {
+            let category = document.getElementById("category").value;
+            let fromUnit = document.getElementById("fromUnit");
+            let toUnit = document.getElementById("toUnit");
+            
+            fromUnit.innerHTML = toUnit.innerHTML = "";
+            
+            units[category].forEach(unit => {
+                let option1 = document.createElement("option");
+                let option2 = document.createElement("option");
+                option1.value = option2.value = unit;
+                option1.textContent = option2.textContent = unit;
+                fromUnit.appendChild(option1);
+                toUnit.appendChild(option2);
+            });
+        }
+        
+        function convert() {
+            let category = document.getElementById("category").value;
+            let inputValue = parseFloat(document.getElementById("inputValue").value);
+            let fromUnit = document.getElementById("fromUnit").value;
+            let toUnit = document.getElementById("toUnit").value;
+            let result = document.getElementById("result");
+            
+            if (isNaN(inputValue)) {
+                result.textContent = "Please enter a valid number";
+                return;
+            }
+            
+            if (category === "temperature") {
+                let convertedValue;
+                if (fromUnit === "C" && toUnit === "F") {
+                    convertedValue = (inputValue * 9/5) + 32;
+                } else if (fromUnit === "F" && toUnit === "C") {
+                    convertedValue = (inputValue - 32) * 5/9;
+                } else if (fromUnit === "C" && toUnit === "K") {
+                    convertedValue = inputValue + 273.15;
+                } else if (fromUnit === "K" && toUnit === "C") {
+                    convertedValue = inputValue - 273.15;
+                } else if (fromUnit === "F" && toUnit === "K") {
+                    convertedValue = (inputValue - 32) * 5/9 + 273.15;
+                } else if (fromUnit === "K" && toUnit === "F") {
+                    convertedValue = (inputValue - 273.15) * 9/5 + 32;
+                } else {
+                    convertedValue = inputValue;
+                }
+                result.textContent = `Result: ${convertedValue.toFixed(2)} ${toUnit}`;
+            } else {
+                try {
+                    let qty = Qty(`${inputValue} ${fromUnit}`).to(toUnit);
+                    result.textContent = `Result: ${qty.toFixed(2)} ${toUnit}`;
+                } catch (error) {
+                    result.textContent = "Invalid conversion";
+                }
+            }
+        }
+        
+        // Initialize units when page loads
+        updateUnits();
+    </script>
+
+</body>
+</html>
